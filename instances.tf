@@ -10,18 +10,27 @@ data "aws_ssm_parameter" "linuxAmiIreland" {
   name     = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
 }
 
-#Create key-pair for logging into EC2 in eu-west-3
-resource "aws_key_pair" "master-key" {
-  provider   = aws.region-master
-  key_name   = "jenkins"
-  public_key = file("~/.ssh/id_rsa.pub")
+resource "tls_private_key" "master" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
-#Create key-pair for logging into EC2 in eu-west-1
+resource "tls_private_key" "worker" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+
+resource "aws_key_pair" "master-key" {
+  provider   = aws.region-master
+  key_name   = var.key_name
+  public_key = tls_private_key.master.public_key_openssh
+}
+
 resource "aws_key_pair" "worker-key" {
   provider   = aws.region-worker
-  key_name   = "jenkins"
-  public_key = file("~/.ssh/id_rsa.pub")
+  key_name   = var.key_name
+  public_key = tls_private_key.worker.public_key_openssh
 }
 
 #Create and bootstrap EC2 in eu-west-3

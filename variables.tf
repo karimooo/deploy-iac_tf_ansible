@@ -12,6 +12,11 @@ variable "instance-type" {
   #  }
 }
 
+variable "key_name" {
+  type    = string
+  default = "jenkins"
+}
+
 variable "dns-name" {
   type    = string
   default = "alfaco.fr." # e.g "cmcloudlab1234.info."

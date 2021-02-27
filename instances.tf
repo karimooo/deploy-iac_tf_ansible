@@ -87,7 +87,7 @@ EOF
     connection {
       type        = "ssh"
       user        = "ec2-user"
-      private_key = aws_key_pair.worker-key.key_name
+      private_key = self.key_name
       host        = self.public_ip
     }
   }
